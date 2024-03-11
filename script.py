@@ -8,6 +8,9 @@ file_id = os.environ.get("FILE_ID", "your_file_id")
 user_id = os.environ.get("USER_ID", "your_user_id")
 execution_id = os.environ.get("EXECUTION_ID", "your_execution_id")
 
+execution_dir = os.environ.get("EXECUTION_DIR")
+
+
 # Basic authentication credentials
 username = os.environ.get("USERNAME", "your_username")
 password = os.environ.get("PASSWORD", "your_password")
@@ -23,8 +26,8 @@ if response_get.status_code == 200:
     # Save the content to a file within the execution folder
     execution_folder_path = os.path.join(user_id, execution_id)
     #os.makedirs(execution_folder_path, exist_ok=True)
-    #file_path = os.path.join(execution_folder_path, 'summary.txt')
-    file_path = 'summary.txt'
+    file_path = os.path.join(execution_dir, 'summary.txt')
+    #file_path = 'summary.txt'
 
 
     with open(file_path, 'wb') as file:
