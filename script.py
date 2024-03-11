@@ -22,7 +22,7 @@ if response_get.status_code == 200:
 
     # Save the content to a file within the execution folder
     execution_folder_path = os.path.join(user_id, execution_id)
-    os.makedirs(execution_folder_path, exist_ok=True)
+    #os.makedirs(execution_folder_path, exist_ok=True)
     #file_path = os.path.join(execution_folder_path, 'summary.txt')
     file_path = 'summary.txt'
 
