@@ -2,36 +2,36 @@ import os
 import requests
 
 # Get URLs and dataset ID from environment variables
-get_url = os.environ.get("GET_URL", "https://matrix.srdc.com.tr/dt4h/feast/api/Dataset?url=https://datatools4heart.eu/feature-sets/study1_features_new")
-post_base_url = os.environ.get("POST_BASE_URL", "https://fl.bsc.es/flmanager/API/v1/data/push_file_content")
-file_id = os.environ.get("FILE_ID", "your_file_id")
+get_url_ub = os.environ.get("GET_URL_UB", "http://161.116.84.46/onfhir-feast/api/Dataset?url=https://datatools4heart.eu/feature-sets/study1")
+get_url_srdc = os.environ.get("GET_URL_SRDC", "https://matrix.srdc.com.tr/dt4h/feast/api/Dataset?url=https://datatools4heart.eu/feature-sets/study1_features_new")
+
 user_id = os.environ.get("USER_ID", "your_user_id")
 execution_id = os.environ.get("EXECUTION_ID", "your_execution_id")
 
 execution_dir = os.environ.get("EXECUTION_DIR")
 
+# Perform GET request for UB
+response_get_ub = requests.get(get_url_ub)
+if response_get_ub.status_code == 200:
+    file_content_ub = response_get_ub.content
+    file_path_ub = os.path.join(execution_dir, 'summary_ub.txt')
+    with open(file_path_ub, 'wb') as file_ub:
+        file_ub.write(file_content_ub)
+    print("GET Request for UB Status Code:", response_get_ub.status_code)
+else:
+    print(f"GET Request for UB failed with status code {response_get_ub.status_code}")
 
-# Basic authentication credentials
-username = os.environ.get("USERNAME", "your_username")
-password = os.environ.get("PASSWORD", "your_password")
+# Perform GET request for SRDC
+response_get_srdc = requests.get(get_url_srdc)
+if response_get_srdc.status_code == 200:
+    file_content_srdc = response_get_srdc.content
+    file_path_srdc = os.path.join(execution_dir, 'summary_srdc.txt')
+    with open(file_path_srdc, 'wb') as file_srdc:
+        file_srdc.write(file_content_srdc)
+    print("GET Request for SRDC Status Code:", response_get_srdc.status_code)
+else:
+    print(f"GET Request for SRDC failed with status code {response_get_srdc.status_code}")
 
-# Perform GET request
-response_get = requests.get(get_url)
-
-# Check if the GET request was successful
-if response_get.status_code == 200:
-    # Get the content of the file from the GET response
-    file_content = response_get.content
-
-    # Save the content to a file within the execution folder
-    execution_folder_path = os.path.join(user_id, execution_id)
-    #os.makedirs(execution_folder_path, exist_ok=True)
-    file_path = os.path.join(execution_dir, 'summary.txt')
-    #file_path = 'summary.txt'
-
-
-    with open(file_path, 'wb') as file:
-        file.write(file_content)
 
 
     # Construct the POST URL with dataset ID, user ID, and execution ID
@@ -43,9 +43,6 @@ if response_get.status_code == 200:
     #response_post = requests.post(post_url, files=files, auth=auth)
 
     # Print response information
-    print("GET Request Status Code:", response_get.status_code)
     #print("POST Request Status Code:", response_post.status_code)
     #print("POST Response Text:", response_post.text)
-else:
-    print(f"GET Request failed with status code {response_get.status_code}")
 
