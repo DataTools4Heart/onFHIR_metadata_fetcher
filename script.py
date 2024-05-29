@@ -1,48 +1,46 @@
 import os
 import requests
 
-# Get URLs and dataset ID from environment variables
-get_url_ub = os.environ.get("GET_URL_UB", "http://161.116.84.46/onfhir-feast/api/Dataset?url=https://datatools4heart.eu/feature-sets/study1")
-get_url_srdc = os.environ.get("GET_URL_SRDC", "https://matrix.srdc.com.tr/dt4h/feast/api/Dataset?url=https://datatools4heart.eu/feature-sets/study1_features_new")
+# Get study ID from environment variables
+study_id = os.environ.get('STUDY_ID', "default_study_id")
+node_name = os.environ.get('NODE_NAME')
 
+# Create the output directory if it doesn't exist
+execution_dir = os.environ.get("EXECUTION_DIR", "/home/ubuntu/UB_manager/sandbox/dt4h_summary_materializer")
+output_dir = os.path.join(execution_dir, "output")
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+
+# Construct URL mappings for different nodes based on environment variables
+node_urls = {}
+for key, value in os.environ.items():
+    if key.startswith("GET_URL_"):
+        node = key[len("GET_URL_"):]
+        node_urls[node] = value
+
+# Get user ID and execution ID from environment variables
 user_id = os.environ.get("USER_ID", "your_user_id")
 execution_id = os.environ.get("EXECUTION_ID", "your_execution_id")
 
-execution_dir = os.environ.get("EXECUTION_DIR")
+# Get the URL based on the node name
+get_url = node_urls.get(node_name)
+if not get_url:
+    print(f"No URL found for node {node_name}.")
+    exit()
 
-# Perform GET request for UB
-response_get_ub = requests.get(get_url_ub)
-if response_get_ub.status_code == 200:
-    file_content_ub = response_get_ub.content
-    file_path_ub = os.path.join(execution_dir, 'summary_ub.txt')
-    with open(file_path_ub, 'wb') as file_ub:
-        file_ub.write(file_content_ub)
-    print("GET Request for UB Status Code:", response_get_ub.status_code)
-else:
-    print(f"GET Request for UB failed with status code {response_get_ub.status_code}")
+try:
+    # Perform GET request
+    response_get = requests.get(get_url)
 
-# Perform GET request for SRDC
-response_get_srdc = requests.get(get_url_srdc)
-if response_get_srdc.status_code == 200:
-    file_content_srdc = response_get_srdc.content
-    file_path_srdc = os.path.join(execution_dir, 'summary_srdc.txt')
-    with open(file_path_srdc, 'wb') as file_srdc:
-        file_srdc.write(file_content_srdc)
-    print("GET Request for SRDC Status Code:", response_get_srdc.status_code)
-else:
-    print(f"GET Request for SRDC failed with status code {response_get_srdc.status_code}")
+    if response_get.status_code == 200:
+        file_content = response_get.content
+        file_path = os.path.join(output_dir, f'summary_{node_name.lower()}.txt')
 
+        with open(file_path, 'wb') as file:
+            file.write(file_content)
 
-
-    # Construct the POST URL with dataset ID, user ID, and execution ID
-    #post_url = f"{post_base_url}/{file_id}?user_id={user_id}&execution_id={execution_id}"
-
-    # Perform POST request with the entire file content and basic authentication
-    #files = {'files': ('file_content.txt', file_content)}
-    #auth = (username, password)
-    #response_post = requests.post(post_url, files=files, auth=auth)
-
-    # Print response information
-    #print("POST Request Status Code:", response_post.status_code)
-    #print("POST Response Text:", response_post.text)
-
+        print(f"GET Request for {node_name} Status Code:", response_get.status_code)
+    else:
+        print(f"GET Request for {node_name} failed with status code {response_get.status_code}")
+except Exception as e:
+    print(f"An error occurred while processing {node_name}: {e}")
