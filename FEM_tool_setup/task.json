@@ -1,0 +1,49 @@
+{
+  "_id": "get_dt4h_summary",
+  "name": "DT4H metadata summary fetcher",
+  "author": "Socayna Jouide",
+  "version": "1.0",
+  "permissions": "public",
+  "visibility": "public",
+  "launcher": [
+    "docker"
+  ],
+  "image": {
+    "label": "registry.gitlab.bsc.es/fl/dt4h_summary_materializer",
+    "hash": "d5679daccadeaf233ff9364b2a195737b375f814f1ce9d8259bb7f13ec542e62",
+    "url": "registry.gitlab.bsc.es/fl/dt4h_summary_materializer:latest",
+    "cmd": " "
+  },
+  "type": [
+    "docker"
+  ],
+  "var_envs": {
+    "FILE_ID": "your_file_id",
+    "USER_ID": "your_user_id",
+    "USERNAME": "your_username",
+    "PASSWORD": "your_password",
+    "EXECUTION_DIR": "$EXECUTION_DIR",
+    "NODE_NAME": "$NODE_NAME",
+    "GET_URL_SRDC": "https://matrix.srdc.com.tr/dt4h/feast/api/Dataset?url=https://datatools4heart.eu/feature-sets/study1_features_new",
+    "GET_URL_BSC": "http://fl.dev.bsc.es/onfhir-feast/api/Dataset/59b78d1c-3f4b-4d7a-a830-b901334dd53a"
+  },
+  "volumes": [
+    {
+      "container_path": "$EXECUTION_DIR",
+      "host_path": "$EXECUTION_DIR"
+    }
+  ],
+  "cpus": "2",
+  "memory": "4",
+  "gpus": "",
+  "inputs": "",
+  "arguments": "",
+  "outputs": {
+    "materialized file": "summary_dataset.json"
+  },
+  "persistent": false,
+  "pre_checks": false,
+  "source_code": {
+    "url": "https://github.com/DataTools4Heart/onFHIR_metadata_fetcher/"
+  }
+}
