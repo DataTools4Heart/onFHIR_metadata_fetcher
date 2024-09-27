@@ -1,0 +1,25 @@
+{
+  "_id": "dt4h_summary_materializer",
+  "name": "DT4H metadata summary fetcher",
+  "author": "Your Name",
+  "version": "1.0",
+  "permissions": "public",
+  "visibility": "public",
+  "plan_type": "FL_session",
+  "deployment_plan": {
+    "tool_id": "dt4h_summary_materializer",
+    "host_list": "BSC"
+  },
+  "tasks": [
+    {
+      "task_id": "get_dt4h_summary",
+      "host_list": [
+        "BSC",
+        "UB2"
+      ]
+    }
+  ],
+  "projects": [
+    "dt4h"
+  ]
+}
